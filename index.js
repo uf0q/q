@@ -13,16 +13,16 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 app.use(express.json());
 
-// Regular Expression للتحقق من صحة البريد الإلكتروني
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// Regular Expression للتحقق من صحة البريد الإلكتروني والنطاق المسموح به
+const emailRegex = /^[^\s@]+@[^\s@]+\.(gmail\.com|yahoo\.com)$/;
 
 // تسجيل مستخدم جديد
 app.post('/signup', async (req, res) => {
     const { email, password } = req.body;
 
-    // التحقق من صحة البريد الإلكتروني
+    // التحقق من صحة البريد الإلكتروني والنطاق المسموح به
     if (!emailRegex.test(email)) {
-        return res.status(400).json({ error: 'البريد الإلكتروني غير صحيح' });
+        return res.status(400).json({ error: 'البريد الإلكتروني غير صحيح أو غير مدعوم' });
     }
 
     const { user, error } = await supabase.auth.signUp({
@@ -50,9 +50,9 @@ app.post('/signup', async (req, res) => {
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
-    // التحقق من صحة البريد الإلكتروني
+    // التحقق من صحة البريد الإلكتروني والنطاق المسموح به
     if (!emailRegex.test(email)) {
-        return res.status(400).json({ error: 'البريد الإلكتروني غير صحيح' });
+        return res.status(400).json({ error: 'البريد الإلكتروني غير صحيح أو غير مدعوم' });
     }
 
     const { session, error } = await supabase.auth.signIn({
