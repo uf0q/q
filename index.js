@@ -34,7 +34,16 @@ app.post('/signup', async (req, res) => {
         return res.status(400).json({ error: error.message });
     }
 
-    res.status(201).json({ user });
+    // إذا تم إنشاء المستخدم بنجاح، أضفه إلى جدول المستخدمين
+    const { data, insertError } = await supabase
+        .from('users')
+        .insert([{ id: user.id, email: user.email }]);
+
+    if (insertError) {
+        return res.status(400).json({ error: insertError.message });
+    }
+
+    res.status(201).json({ user: data });
 });
 
 // تسجيل دخول المستخدم
